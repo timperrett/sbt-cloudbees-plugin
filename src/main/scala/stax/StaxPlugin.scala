@@ -1,17 +1,14 @@
 package stax
 
 import sbt._
-// import net.staxnet.appserver.config.{AppConfig,AppConfigHelper}
-// import net.staxnet.appserver.utils.ZipHelper
-// import net.staxnet.appserver.utils.ZipHelper.ZipEntryHandler
-
-// import _root_.net.stax.api.{HashWriteProgress,StaxClient}
-
-
+import com.staxnet.appserver.config.{AppConfig,AppConfigHelper}
+import com.staxnet.appserver.utils.ZipHelper
+import com.staxnet.appserver.utils.ZipHelper.ZipEntryHandler
+import net.stax.api.{HashWriteProgress,StaxClient}
 import java.io.{BufferedReader,File,FileInputStream,FileOutputStream,IOException,InputStream,InputStreamReader,PrintStream}
 import java.util.zip.{ZipEntry,ZipOutputStream}
 
-trait StaxPlugin extends DefaultProject {
+trait StaxPlugin extends DefaultWebProject {
   /** 
    * deploy to stax.net
    */
