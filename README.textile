@@ -19,5 +19,12 @@ Add the stax plugin to your SBT project
 <pre><code>
   class LiftTravelProject(info: ProjectInfo) 
       extends DefaultWebProject(info) 
-      with stax.StaxPlugin
+      with stax.StaxPlugin {
+        ....
+        // stax
+        override def staxApplicationId = "whatever"
+        override def staxUsername = "youruser"
+        // leave out and you'll be prompted at deploy time
+        // override def staxPassword = "password"
+      }
 </code></pre>
