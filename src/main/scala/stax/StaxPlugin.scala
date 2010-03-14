@@ -9,9 +9,10 @@ import java.io.{BufferedReader,File,FileInputStream,FileOutputStream,IOException
 import java.util.zip.{ZipEntry,ZipOutputStream}
 
 trait StaxPlugin extends DefaultWebProject {
-  def staxApplicationId: String
+  def staxApplicationId: String = ""
   def staxUsername: String = ""
-  
+  def staxPassword: String = ""
+  def staxServer: String = "api.stax.net"
   /**
    * Deploy
    */
@@ -24,37 +25,65 @@ trait StaxPlugin extends DefaultWebProject {
    protected def staxDeployAction = 
      task(staxDeployTask) dependsOn(`package`) describedAs(StaxDeployDescription)
 
-   private def getCredentials: (String,String) = {
-     val username = if(staxUsername.isEmpty){
-       val un = prompt("Stax Username:")
-       un
-     } else staxUsername
-     val password = prompt("Stax Password:")
-     (username,password)
-   }
    
    private def staxDeployTask = {
      
      // println(warPath)
-     val appId = prompt("Stax Application ID:")
-     val credentials = getCredentials
-     val client = new StaxClient(apiUrl, credentials._1, credentials._2, "xml", "0.1");
-     client.applicationDeployWar(appId, 
-       this.environment, this.message, 
-       this.deployFile.getAbsolutePath(), 
-       null, new HashWriteProgress());
+     val username = 
+       prompt("Stax Username:", () => staxUsername.isEmpty) getOrElse staxUsername
+     val password = 
+       prompt("Stax Password:", () => staxPassword.isEmpty) getOrElse staxPassword
+     val appId = 
+       prompt("Stax Application ID:", () => staxApplicationId.isEmpty) getOrElse staxApplicationId
+     
+     val apiUrl = "http://%s/api".format(staxServer)
      
      
+     if(warPath.exists){
+       // val appConfig = getAppConfig(this.warFile, ApplicationHelper.getEnvironmentList(this.environment, new String[0]), new String[] { "deploy" });
+       val appConfig = new AppConfig()
+       val defaultAppDomain = username
+       val appIdParts = appId.split("/")
+       var targetAppId = ""
+       val domain = if(appIdParts.length > 1){
+         appIdParts(0)
+       } else if(!defaultAppDomain.isEmpty){
+         targetAppId = defaultAppDomain + "/" + appId
+         defaultAppDomain
+       } else {
+         log.error("Default app domain could not be determined, appid needs to be fully-qualified")
+       }
+       
+       val environment = appConfig.getAppliedEnvironments().toArray.toList.mkString(",")       
+       
+       log.info("Deploying application %s (environment: %s)".format(appId,environment))
+       
+       val client = new StaxClient(apiUrl, username, password, "xml", "0.1");
+       client.applicationDeployWar(targetAppId, 
+         environment, null, 
+         warPath.asFile.getAbsolutePath(), 
+         null, new HashWriteProgress());
+       
+     } else {
+       log.error("No WAR file exists to deploy to Stax")
+     }
      None
    }
   
   /**
    * Utils
    */
-  
+  // private def getAppConfig(deployZip: File, environments: Array[String], implicitEnvironments: Array[String]){
+    // val appConfig = new AppConfig();
+    
+    // appConfig
+  // }
   private def trim(s: Option[String]) = s.getOrElse("")
-  private def prompt(withText: String): String = 
-    trim(SimpleReader.readLine("\n"+withText))
+  private def prompt(withText: String, conditional: () => Boolean): Option[String] = 
+    if(conditional()){
+      Some(trim(SimpleReader.readLine("\n"+withText)))
+    } else { None }
+    
   
   
 }
