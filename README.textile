@@ -28,3 +28,9 @@ Add the stax plugin to your SBT project
         // override def staxPassword = "password"
       }
 </code></pre>
+
+Now your all configured and good to go, just run the deploy action in SBT console:
+
+<code>
+  stax-deploy
+</code>
