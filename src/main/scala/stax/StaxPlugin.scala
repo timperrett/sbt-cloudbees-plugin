@@ -73,11 +73,6 @@ trait StaxPlugin extends DefaultWebProject {
   /**
    * Utils
    */
-  // private def getAppConfig(deployZip: File, environments: Array[String], implicitEnvironments: Array[String]){
-    // val appConfig = new AppConfig();
-    
-    // appConfig
-  // }
   private def trim(s: Option[String]) = s.getOrElse("")
   private def prompt(withText: String, conditional: () => Boolean): Option[String] = 
     if(conditional()){

@@ -1,0 +1,8 @@
+Initial release: 
+
+* Supporting the "deploy" method for getting your file onto stax.net cloud
+
+Known issues:
+
+* Currently, we only support WAR files, not EAR.
+

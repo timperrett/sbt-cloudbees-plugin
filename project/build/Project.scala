@@ -1,6 +1,6 @@
 import sbt._
 
-class StaxPlugin(info: ProjectInfo) extends PluginProject(info){
+class StaxPlugin(info: ProjectInfo) extends PluginProject(info) with posterous.Publish {
   // repositories
   val staxReleases = "stax-release-repo" at "http://mvn.stax.net/content/repositories/public"
   
@@ -10,5 +10,5 @@ class StaxPlugin(info: ProjectInfo) extends PluginProject(info){
   
   override def managedStyle = ManagedStyle.Maven
   val publishTo = "Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/"
-  // Credentials(Path.userHome / ".ivy2" / ".credentials", log)
+  Credentials(Path.userHome / ".ivy2" / ".credentials", log)
 }
