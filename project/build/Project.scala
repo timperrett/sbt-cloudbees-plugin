@@ -10,19 +10,18 @@ class StaxPlugin(info: ProjectInfo) extends PluginProject(info)
   val staxAppServer = "net.stax" % "stax-appserver" % "1.0.20090908-SNAPSHOT" % "compile"
   
   // compiller plugins
-  val inherit = compilerPlugin("inherit" %% "inherit" % "0.1.2")
-  
-  val sxr = compilerPlugin("org.scala-tools.sxr" %% "sxr" % "0.2.4")
-  override def compileOptions =
-      CompileOption("-P:sxr:base-directory:" + mainScalaSourcePath.asFile.getAbsolutePath) ::
-      super.compileOptions.toList
-  def sxrMainPath = outputPath / "classes.sxr"
-  def sxrTestPath = outputPath / "test-classes.sxr"
-  def sxrPublishPath = normalizedName / version.toString
-  lazy val publishSxr = 
-    syncTask(sxrMainPath, sxrPublishPath / "main") dependsOn(
-      syncTask(sxrTestPath, sxrPublishPath / "test") dependsOn(testCompile)
-    )
+  // val inherit = compilerPlugin("inherit" %% "inherit" % "0.1.2")
+  // val sxr = compilerPlugin("org.scala-tools.sxr" %% "sxr" % "0.2.4")
+  // override def compileOptions =
+  //     CompileOption("-P:sxr:base-directory:" + mainScalaSourcePath.asFile.getAbsolutePath) ::
+  //     super.compileOptions.toList
+  // def sxrMainPath = outputPath / "classes.sxr"
+  // def sxrTestPath = outputPath / "test-classes.sxr"
+  // def sxrPublishPath = normalizedName / version.toString
+  // lazy val publishSxr = 
+  //   syncTask(sxrMainPath, sxrPublishPath / "main") dependsOn(
+  //     syncTask(sxrTestPath, sxrPublishPath / "test") dependsOn(testCompile)
+  //   )
   
   // repository config for publishing
   override def managedStyle = ManagedStyle.Maven
