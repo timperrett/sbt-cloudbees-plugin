@@ -1,8 +1,7 @@
-h1. Stax SBT Plugin
+Integration for SBT that lets you deploy apps to the awesome stax.net cloud
 
-Integration for SBT that lets you deploy apps to stax.net
-
-h1. Usage
+Usage
+-----
 
 Define the plugin information in your Plugins.scala
 
@@ -10,7 +9,8 @@ Define the plugin information in your Plugins.scala
   class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
     val stax = "eu.getintheloop" % "sbt-stax-plugin" % "1.0"
     // repos
-    val staxReleases = "stax-release-repo" at "http://mvn.stax.net/content/repositories/public"
+    val staxReleases = "stax-release-repo" 
+      at "http://mvn.stax.net/content/repositories/public"
   }
 </code></pre>
  
@@ -29,8 +29,11 @@ Add the stax plugin to your SBT project
       }
 </code></pre>
 
-Now your all configured and good to go, just run the deploy action in SBT console:
+Now your all configured and good to go, just 
+run the deploy action in SBT console:
 
 <code>
   stax-deploy
 </code>
+
+
