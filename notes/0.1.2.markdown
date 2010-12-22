@@ -1,0 +1,4 @@
+Fixed:
+
+* Scenario where multiple users wanted to deploy the same application for which they were not the direct owner.
+
