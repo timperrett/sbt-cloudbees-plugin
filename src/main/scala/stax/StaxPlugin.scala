@@ -38,22 +38,9 @@ trait StaxPlugin extends DefaultWebProject {
      
      val apiUrl = "http://%s/api".format(staxServer)
      
-     
      if(warPath.exists){
-       // val appConfig = getAppConfig(this.warFile, ApplicationHelper.getEnvironmentList(this.environment, new String[0]), new String[] { "deploy" });
        val appConfig = new AppConfig()
-       val defaultAppDomain = username
-       val appIdParts = appId.split("/")
-       var targetAppId = ""
-       val domain = if(appIdParts.length > 1){
-         appIdParts(0)
-       } else if(!defaultAppDomain.isEmpty){
-         targetAppId = defaultAppDomain + "/" + appId
-         defaultAppDomain
-       } else {
-         log.error("Default app domain could not be determined, appid needs to be fully-qualified")
-       }
-       
+       val targetAppId = StaxPlugin.targetAppId(username, appId)
        val environment = appConfig.getAppliedEnvironments().toArray.toList.mkString(",")       
        
        log.info("Deploying application %s (environment: %s)".format(appId,environment))
@@ -78,7 +65,12 @@ trait StaxPlugin extends DefaultWebProject {
     if(conditional()){
       Some(trim(SimpleReader.readLine("\n"+withText)))
     } else { None }
-    
   
-  
+}
+
+object StaxPlugin {
+  def targetAppId(username: String, appId: String) = appId.split("/").toList match {
+    case a :: Nil => username+"/"+a
+    case _ => appId
+  }
 }
