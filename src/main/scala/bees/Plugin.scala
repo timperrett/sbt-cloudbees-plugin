@@ -1,14 +1,7 @@
 package bees
 
 import sbt._
-import com.staxnet.appserver._,
-  config.{AppConfig,AppConfigHelper},
-  utils.ZipHelper,
-  utils.ZipHelper.ZipEntryHandler
-import net.stax.api.{HashWriteProgress,StaxClient}
-import java.io.{BufferedReader,File,FileInputStream,FileOutputStream,
-  IOException,InputStream,InputStreamReader,PrintStream}
-import java.util.zip.{ZipEntry,ZipOutputStream}
+import com.cloudbees.api.{BeesClient,HashWriteProgress}
 
 trait RunCloudPlugin extends DefaultWebProject {
   import RunCloudPlugin._
@@ -33,15 +26,19 @@ trait RunCloudPlugin extends DefaultWebProject {
       key <- beesApiKey orPromtFor("CloudBees API Key")
       secret <- beesSecret orPromtFor("CloudBees Secret")
       appId <- beesApplicationId orPromtFor("CloudBees Application ID")
-    } yield UserSettings(key,secret,targetAppId(appId))).foreach { s =>
+    } yield UserSettings(key,secret,appId)).foreach { s =>
       if(warPath.exists){
         log.info("Deploying application '%s' to Run@Cloud".format(s.appId))
-        val appConfig = new AppConfig
-        val environment = appConfig.getAppliedEnvironments.toArray.toList.mkString(",")
-        val client = new StaxClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "0.1")
-        client.applicationDeployWar(s.appId, 
-          environment, null, warPath.asFile.getAbsolutePath, 
-          null, false, new HashWriteProgress)
+        val client = new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "0.1")
+        
+        client.applicationDeployWar(
+          s.appId, 
+          null, 
+          null, 
+          warPath.asFile.getAbsolutePath, 
+          null, 
+          false,
+          new HashWriteProgress)
       } else log.error("No WAR file exists to deploy to Run@Cloud")
     }
     None
