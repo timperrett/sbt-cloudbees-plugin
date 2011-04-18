@@ -1,4 +1,8 @@
-Fixed:
+After stax.net was acquired by CloudBees it made sense to move to the new endpoints etc to ensure on-going usefulness of the plugin in case the stax.net endpoints are ever decommissioned.
 
-* Scenario where multiple users wanted to deploy the same application for which they were not the direct owner.
+Changes:
+
+* Now deploy your application with "bees-deploy" in place of "stax-deploy"
+* Rename your staxApplicationId to beesApplicationId
+* Rename your staxUsername to beesUsername
 
