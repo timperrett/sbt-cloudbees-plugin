@@ -21,28 +21,36 @@ trait RunCloudPlugin extends DefaultWebProject {
   protected def beesDeployAction = 
     task(beesDeployTask) dependsOn(`package`) describedAs(BeesDeployDescription)
   
-  private def beesDeployTask: Option[String] = {
-    (for {
-      key <- beesApiKey orPromtFor("CloudBees API Key")
-      secret <- beesSecret orPromtFor("CloudBees Secret")
-      appId <- beesApplicationId orPromtFor("CloudBees Application ID")
-    } yield UserSettings(key,secret,appId)).foreach { s =>
-      if(warPath.exists){
-        log.info("Deploying application '%s' to Run@Cloud".format(s.appId))
-        val client = new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "0.1")
-        
-        client.applicationDeployWar(
-          s.appId, 
-          null, 
-          null, 
-          warPath.asFile.getAbsolutePath, 
-          null, 
-          false,
-          new HashWriteProgress)
+  private def beesDeployTask = {
+    client.foreach { c => if(warPath.exists){
+      log.info("Deploying application '%s' to Run@Cloud".format(app))
+      c.applicationDeployWar(
+        app, null, null, 
+        warPath.asFile.getAbsolutePath, 
+        null, false, new HashWriteProgress)
       } else log.error("No WAR file exists to deploy to Run@Cloud")
     }
     None
   }
+  
+  val BeesAppListDescription = "List the applications in your Run@Cloud account"
+  lazy val beesApplist = beesApplistAction
+  protected def beesApplistAction = 
+    task(beesApplistTask)
+  private def beesApplistTask = {
+    client.foreach(c => println(c.applicationList.getApplications))
+    None
+  }
+  
+  private def settings = for {
+    key <- beesApiKey orPromtFor("CloudBees API Key")
+    secret <- beesSecret orPromtFor("CloudBees Secret")
+  } yield UserSettings(key,secret)
+  
+  private def client: Option[BeesClient] = settings.map(s => 
+    new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "0.1"))
+  
+  private def app = (beesApplicationId orPromtFor("CloudBees Application ID")).getOrElse("<unknown>")
 }
 
 class PromptableOption(val opt: Option[String]){
@@ -50,7 +58,7 @@ class PromptableOption(val opt: Option[String]){
     opt orElse SimpleReader.readLine("\n"+withText+": ").map(_.trim)
 }
 
-case class UserSettings(key: String, secret: String, appId: String)
+case class UserSettings(key: String, secret: String)
 
 import java.util.Properties
 import java.io.{File,FileInputStream}
