@@ -8,9 +8,8 @@ Define the plugin information in your Plugins.scala
 
 <pre><code>
   class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.5"
-    lazy val beehive = "cloudbees.repo" 
-      at "http://repository-cloudbees.forge.cloudbees.com/public-snapshot/"
+    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.6"
+    lazy val sonatypeRepo = "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
   }
 </code></pre>
  
@@ -21,7 +20,7 @@ Add the plugin to your SBT project like so:
       extends DefaultWebProject(info) 
       with bees.RunCloudPlugin {
         ....
-        override def beesApplicationId = "whatever"
+        override def beesApplicationId = Some("whatever")
       }
 </code></pre>
 
