@@ -1,6 +1,6 @@
-h1. Stax SBT Plugin
+h1. CloudBees Run@Cloud SBT Plugin
 
-Integration for SBT that lets you deploy apps to stax.net
+Integration for SBT that lets you deploy apps to the CloudBees RUN@Cloud PaaS
 
 h1. Usage
 
