@@ -1,7 +1,6 @@
 import sbt._
 
-class CloudBeesPlugin(info: ProjectInfo) extends PluginProject(info){
-      //with posterous.Publish {
+class CloudBeesPlugin(info: ProjectInfo) extends PluginProject(info) with posterous.Publish {
   // repositories
   val staxReleases = "stax-release-repo" at "http://mvn.stax.net/content/repositories/public"
   val specsRepo = "specs-repo" at "http://specs.googlecode.com/svn/maven2/"
