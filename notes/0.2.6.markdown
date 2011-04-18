@@ -1,0 +1,9 @@
+After stax.net was acquired by CloudBees it made sense to move to the new endpoints etc to ensure on-going usefulness of the plugin in case the stax.net endpoints are ever decommissioned. This version is a complete rewrite from the previous version.
+
+Changes:
+
+* If any configuration parameter is not defined, the plugin auto-prompts you for it
+* Now deploy your application with "bees-deploy" in place of "stax-deploy"
+* Rename your staxApplicationId to beesApplicationId
+* Rename your staxUsername to beesUsername
+
