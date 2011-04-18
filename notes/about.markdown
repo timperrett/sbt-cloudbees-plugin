@@ -1,4 +1,4 @@
-Integration for SBT that lets you deploy apps to the awesome stax.net cloud
+Integration for SBT that lets you deploy apps to the CloudBees RUN@Cloud PaaS
 
 Usage
 -----
@@ -7,25 +7,23 @@ Define the plugin information in your Plugins.scala
 
 <pre><code>
   class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-    val stax = "eu.getintheloop" % "sbt-stax-plugin" % "0.1.2"
-    // repos
-    val staxReleases = "stax-release-repo" 
+    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.0"
+    lazy val beehive = "cloudbees.repo" 
       at "http://mvn.stax.net/content/repositories/public"
   }
 </code></pre>
  
-Add the stax plugin to your SBT project
+Add the plugin to your SBT project like so:
 
 <pre><code>
-  class LiftTravelProject(info: ProjectInfo) 
+  class YourProject(info: ProjectInfo) 
       extends DefaultWebProject(info) 
-      with stax.StaxPlugin {
+      with bees.RunCloudPlugin {
         ....
-        // stax
-        override def staxApplicationId = "whatever"
-        override def staxUsername = "youruser"
+        override def beesApplicationId = "whatever"
+        override def beesUsername = "youruser"
         // leave out and you'll be prompted at deploy time
-        // override def staxPassword = "password"
+        // override def beesPassword = "password"
       }
 </code></pre>
 
@@ -33,7 +31,7 @@ Now your all configured and good to go, just
 run the deploy action in SBT console:
 
 <code>
-  stax-deploy
+  bees-deploy
 </code>
 
 
