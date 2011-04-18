@@ -21,6 +21,7 @@ Add the plugin to your SBT project like so:
       with bees.RunCloudPlugin {
         ....
         override def beesApplicationId = Some("whatever")
+        override def beesUsername = Some("youruser")
       }
 </code></pre>
 

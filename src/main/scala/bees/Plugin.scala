@@ -2,6 +2,7 @@ package bees
 
 import sbt._
 import com.cloudbees.api.{BeesClient,HashWriteProgress}
+import scala.collection.jcl.Conversions._
 
 trait RunCloudPlugin extends DefaultWebProject {
   import RunCloudPlugin._
@@ -10,11 +11,12 @@ trait RunCloudPlugin extends DefaultWebProject {
   
   private val beesApiKey = 
     keyFor("bees.api.key") orElse keyFor("bees.apikey")
-    
+  
   private val beesSecret =
     keyFor("bees.api.secret") orElse keyFor("bees.secret")
   
   def beesApplicationId: Option[String] = None
+  def beesUsername: Option[String] = None
   
   val BeesDeployDescription = "Deploy your WAR to stax.net with bees-deploy"
   lazy val beesDeploy = beesDeployAction
@@ -22,14 +24,16 @@ trait RunCloudPlugin extends DefaultWebProject {
     task(beesDeployTask) dependsOn(`package`) describedAs(BeesDeployDescription)
   
   private def beesDeployTask = {
-    client.foreach { c => if(warPath.exists){
-      log.info("Deploying application '%s' to Run@Cloud".format(app))
-      c.applicationDeployWar(
-        app, null, null, 
-        warPath.asFile.getAbsolutePath, 
-        null, false, new HashWriteProgress)
-      } else log.error("No WAR file exists to deploy to Run@Cloud")
-    }
+    if(!app.isEmpty){
+      client.foreach { c => 
+        if(warPath.exists){
+          log.info("Deploying application '%s' to Run@Cloud".format(app))
+          c.applicationDeployWar(
+            app, null, null, 
+            warPath.asFile.getAbsolutePath, 
+            null, false, new HashWriteProgress)
+        } else log.error("No WAR file exists to deploy to Run@Cloud")
+    }}
     None
   }
   
@@ -38,7 +42,12 @@ trait RunCloudPlugin extends DefaultWebProject {
   protected def beesApplistAction = 
     task(beesApplistTask)
   private def beesApplistTask = {
-    client.foreach(c => println(c.applicationList.getApplications))
+    println("Applications")
+    println("============")
+    client.foreach { cloud => 
+      cloud.applicationList.getApplications.foreach(
+        a => println("+ %s - %s".format(a.getTitle, a.getUrls.first)))
+    }
     None
   }
   
@@ -48,9 +57,12 @@ trait RunCloudPlugin extends DefaultWebProject {
   } yield UserSettings(key,secret)
   
   private def client: Option[BeesClient] = settings.map(s => 
-    new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "0.1"))
+    new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "1.0"))
   
-  private def app = (beesApplicationId orPromtFor("CloudBees Application ID")).getOrElse("<unknown>")
+  private def app = (for{
+    uid <- beesUsername orPromtFor("CloudBees Username")
+    aid <- beesApplicationId orPromtFor("CloudBees Application ID")
+  } yield targetAppId(uid,aid)).getOrElse("<unknown>")
 }
 
 class PromptableOption(val opt: Option[String]){
