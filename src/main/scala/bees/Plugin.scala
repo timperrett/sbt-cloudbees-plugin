@@ -15,10 +15,10 @@ trait RunCloudPlugin extends DefaultWebProject {
   
   private val beesApiHost = "api.cloudbees.com"
   
-  private val beesApiKey: Option[String] = 
+  private val beesApiKey = 
     keyFor("bees.api.key") orElse keyFor("bees.apikey")
     
-  private val beesSecret: Option[String] =
+  private val beesSecret =
     keyFor("bees.api.secret") orElse keyFor("bees.secret")
   
   def beesApplicationId: Option[String] = None
@@ -29,13 +29,11 @@ trait RunCloudPlugin extends DefaultWebProject {
     task(beesDeployTask) dependsOn(`package`) describedAs(BeesDeployDescription)
   
   private def beesDeployTask: Option[String] = {
-    val settings = for {
+    (for {
       key <- beesApiKey orPromtFor("CloudBees API Key")
       secret <- beesSecret orPromtFor("CloudBees Secret")
       appId <- beesApplicationId orPromtFor("CloudBees Application ID")
-    } yield UserSettings(key,secret,appId) 
-    
-    settings.foreach { s =>
+    } yield UserSettings(key,secret,targetAppId(appId))).foreach { s =>
       if(warPath.exists){
         log.info("Deploying application '%s' to Run@Cloud".format(s.appId))
         val appConfig = new AppConfig
@@ -50,9 +48,9 @@ trait RunCloudPlugin extends DefaultWebProject {
   }
 }
 
-class PromptableOption {
+class PromptableOption(val opt: Option[String]){
   def orPromtFor(withText: String): Option[String] = 
-    SimpleReader.readLine("\n"+withText+": ").map(_.trim)
+    opt orElse SimpleReader.readLine("\n"+withText+": ").map(_.trim)
 }
 
 case class UserSettings(key: String, secret: String, appId: String)
@@ -63,12 +61,12 @@ import java.io.{File,FileInputStream}
 object RunCloudPlugin {
   
   implicit def option2PromtableOption(in: Option[String]): PromptableOption = 
-    new PromptableOption
+    new PromptableOption(in)
   
-  // def targetAppId(username: String, appId: String) = appId.split("/").toList match {
-  //   case a :: Nil => username+"/"+a
-  //   case _ => appId
-  // }
+  def targetAppId(username: String, appId: String) = appId.split("/").toList match {
+    case a :: Nil => username+"/"+a
+    case _ => appId
+  }
   
   def configuration: Option[Properties] = {
     val properties = new Properties
