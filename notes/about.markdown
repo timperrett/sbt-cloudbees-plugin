@@ -15,13 +15,13 @@ Once you have these two values, you can do one of two things:
 * Enter them when the plugin prompts you; this will be on everytime you run a deployment to the cloud
 * Create a properties file called bees.config in $HOME/.bees/ so that you only need to define them once per computer. This properties file needs to be a key-value pair style like this:
 
-bees.api.key=XXXXXXXXXX
+<pre><code>bees.api.key=XXXXXXXXXX
 bees.api.secret=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX=
+</code></pre>
 
 Whichever route you choose to specify that information, you then only need to define the plugin information in any given project. Specifically, in the Plugins.scala file define the following:
 
-<pre><code>
-  import sbt._
+<pre><code>import sbt._
   class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
     lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.6"
     lazy val sonatypeRepo = "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
@@ -30,8 +30,7 @@ Whichever route you choose to specify that information, you then only need to de
  
 Add the plugin to your SBT project like so:
 
-<pre><code>
-  import sbt._
+<pre><code>import sbt._
   class YourProject(info: ProjectInfo) extends DefaultWebProject(info) with bees.RunCloudPlugin {
     ....
     override def beesApplicationId = Some("whatever")
