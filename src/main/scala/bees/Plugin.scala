@@ -51,13 +51,6 @@ trait RunCloudPlugin extends DefaultWebProject {
     None
   }
   
-  // private def war = if(beesUseDeltaWar){
-  //   // create delta war file
-  //   
-  // } else warPath.asFile.getAbsolutePath
-  // 
-  // private def checkSums = client.map(_.applicationCheckSums())
-  // 
   private def settings = for {
     key <- beesApiKey orPromtFor("CloudBees API Key")
     secret <- beesSecret orPromtFor("CloudBees Secret")
