@@ -17,6 +17,7 @@ trait RunCloudPlugin extends DefaultWebProject {
   
   def beesApplicationId: Option[String] = None
   def beesUsername: Option[String] = None
+  def beesShouldDeltaWar = true
   
   val BeesDeployDescription = "Deploy your WAR to stax.net with bees-deploy"
   lazy val beesDeploy = beesDeployAction
@@ -29,9 +30,8 @@ trait RunCloudPlugin extends DefaultWebProject {
         if(warPath.exists){
           log.info("Deploying application '%s' to Run@Cloud".format(app))
           c.applicationDeployWar(
-            app, null, null, 
-            warPath.asFile.getAbsolutePath, 
-            null, false, new HashWriteProgress)
+            app, null, null, warPath.asFile.getAbsolutePath,
+            null, beesShouldDeltaWar, new HashWriteProgress)
         } else log.error("No WAR file exists to deploy to Run@Cloud")
     }}
     None
@@ -51,6 +51,13 @@ trait RunCloudPlugin extends DefaultWebProject {
     None
   }
   
+  // private def war = if(beesUseDeltaWar){
+  //   // create delta war file
+  //   
+  // } else warPath.asFile.getAbsolutePath
+  // 
+  // private def checkSums = client.map(_.applicationCheckSums())
+  // 
   private def settings = for {
     key <- beesApiKey orPromtFor("CloudBees API Key")
     secret <- beesSecret orPromtFor("CloudBees Secret")
