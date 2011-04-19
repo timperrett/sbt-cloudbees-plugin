@@ -20,7 +20,7 @@ Whichever route you choose to specify that information, you then only need to de
 
 <pre><code>  import sbt._
   class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.6"
+    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.7"
     lazy val sonatypeRepo = "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
   }
 </code></pre>
