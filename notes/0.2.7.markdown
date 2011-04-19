@@ -1,0 +1,6 @@
+Now supporting delta-updates of WAR files. This slashes the amount of time it takes to deploy a file to Run@Cloud to a few seconds.
+
+Changes:
+
+* Added new control "beesShouldDeltaWar". If for some reason you don't want to use the delta WAR functionality then you should just set <code>override def beesShouldDeltaWar = false</code> within your project file.
+
