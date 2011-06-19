@@ -2,13 +2,14 @@ package bees
 
 import sbt._
 import com.cloudbees.api.{BeesClient,HashWriteProgress}
+import WebPlugin._
 
-class PromptableOption(val opt: Option[String]){
+final class PromptableOption(val opt: Option[String]){
   def orPromtFor(withText: String): Option[String] = 
     opt orElse SimpleReader.readLine("\n"+withText+": ").map(_.trim)
 }
 
-case class UserSettings(key: String, secret: String)
+final case class UserSettings(key: String, secret: String)
 
 object RunCloudPlugin extends Plugin {
   private[bees] object Internals {
@@ -70,6 +71,7 @@ object RunCloudPlugin extends Plugin {
   
   // tasks
   val beesAppList = TaskKey[Unit]("bees-app-list", "List the applications in your Run@Cloud account")
+  val beesDeploy  = TaskKey[Unit]("bees-deploy", "Deploy the project WAR to Run@Cloud")
   
   private def beesApplistTask {
     log.info("Applications")
@@ -85,6 +87,24 @@ object RunCloudPlugin extends Plugin {
     beesShouldDeltaWar := true,
     beesAppList := beesApplistTask
   )
+  
+  private def beesDeployTask { 
+    // val warPath = WebPlugin.tempoaryWarPath
+    // if(!app.isEmpty){
+    //   client.foreach { c => 
+    //     if(warPath.exists){
+    //       log.info("Deploying application '%s' to Run@Cloud".format(app))
+    //       c.applicationDeployWar(
+    //         app, null, null, warPath.asFile.getAbsolutePath,
+    //         null, beesShouldDeltaWar, new HashWriteProgress)
+    //     } else log.error("No WAR file exists to deploy to Run@Cloud")
+    // }}
+  }
+  
+  // private def app = (for{
+  //   uid <- beesUsername orPromtFor("CloudBees Username")
+  //   aid <- beesApplicationId orPromtFor("CloudBees Application ID")
+  // } yield targetAppId(uid,aid)).getOrElse("<unknown>")
   
   private def client: Option[BeesClient] = machineSettings.map(s => 
     new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "1.0"))
@@ -105,23 +125,8 @@ object RunCloudPlugin extends Plugin {
   //   protected def beesDeployAction = 
   //     task(beesDeployTask) dependsOn(`package`) describedAs(BeesDeployDescription)
   //   
-  //   private def beesDeployTask = {
-  //     if(!app.isEmpty){
-  //       client.foreach { c => 
-  //         if(warPath.exists){
-  //           log.info("Deploying application '%s' to Run@Cloud".format(app))
-  //           c.applicationDeployWar(
-  //             app, null, null, warPath.asFile.getAbsolutePath,
-  //             null, beesShouldDeltaWar, new HashWriteProgress)
-  //         } else log.error("No WAR file exists to deploy to Run@Cloud")
-  //     }}
-  //     None
-  //   }
+
   //   
-  //   private def app = (for{
-  //     uid <- beesUsername orPromtFor("CloudBees Username")
-  //     aid <- beesApplicationId orPromtFor("CloudBees Application ID")
-  //   } yield targetAppId(uid,aid)).getOrElse("<unknown>")
 // }
 
 
