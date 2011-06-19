@@ -1,10 +1,11 @@
+
 sbtPlugin := true
 
 organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version := "0.3.0"
+version := "0.3.0-SNAPSHOT"
 
 // maven repositories
 resolvers ++= Seq(
@@ -15,20 +16,13 @@ resolvers ++= Seq(
 
 scalacOptions += "-deprecation"
 
-libraryDependencies += "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.0.0-SNAPSHOT" % "compile"
-
-libraryDependencies += "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
-
-libraryDependencies += "com.github.siasia" %% "xsbt-web-plugin" % "0.10.0"
+libraryDependencies ++= Seq(
+  "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.0.0-SNAPSHOT" % "compile",
+  "com.github.siasia" %% "xsbt-web-plugin" % "0.1-SNAPSHOT" % "compile",
+  "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
+)
 
 // publishing
 publishTo := Some("scalatools.releases" at "http://nexus.scala-tools.org/content/repositories/releases/")
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
-
-posterousEmail := "tperrett@googlemail.com"
-
-posterousPassword := "xxxx"
-
-// add the web plugin
-// seq(WebPlugin.webSettings :_*)
