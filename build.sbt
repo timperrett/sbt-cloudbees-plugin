@@ -5,7 +5,7 @@ organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version := "0.3.0-SNAPSHOT"
+version := "0.3.0"
 
 // maven repositories
 resolvers ++= Seq(

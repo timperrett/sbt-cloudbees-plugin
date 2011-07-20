@@ -19,27 +19,20 @@ Once you have these two values, you can do one of two things:
 bees.api.secret=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX=
 </code></pre>
 
-Whichever route you choose to specify that information, you then only need to define the plugin information in any given project. Specifically, in the Plugins.scala file define the following:
+Whichever route you choose to specify that information, you then only need to define the plugin information in any given project. 
+Specifically, in project/plugins/build.sbt define the following:
 
-<pre><code>import sbt._
-  class Plugins(info: ProjectInfo) extends PluginDefinition(info) {
-    lazy val cloudbees = "eu.getintheloop" % "sbt-cloudbees-plugin" % "0.2.7"
-    lazy val sonatypeRepo = "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
-  }
+<pre><code>resolvers += "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
+
+libraryDependencies += "eu.getintheloop" %% "sbt-cloudbees-plugin" % "0.3.0"
 </code></pre>
  
-Add the plugin to your SBT project like so:
+Add the plugin to your built.sbt project file like so:
 
-<pre><code>import sbt._
-  class YourProject(info: ProjectInfo) extends DefaultWebProject(info) with bees.RunCloudPlugin {
-    ....
-    override def beesApplicationId = Some("whatever")
-    override def beesUsername = Some("youruser")
-  }
+<pre><code>seq(bees.RunCloudPlugin.deploymentSettings :_*)
 </code></pre>
 
 Again, if you would prefer to enter these values when you deploy your application then you can of course just enter the appropriate values when prompted. Now your all configured and good to go, there are two commands you can run with this plugin:
 
-* Get a list of your configured applications: <code>bees-applist</code>
+* Get a list of your configured applications: <code>bees-app-list</code>
 * Deploy your application <code>bees-deploy</code>
-

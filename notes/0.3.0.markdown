@@ -1,0 +1,5 @@
+Reworking for SBT 0.10.1. Currently only support SBT 0.10.1 until I have time to figure the multi-version build process! Mandatory hat tip to Lucien Pereira (https://github.com/lpereir4) for contributing the deploy code after my initial reworking of the plugin.
+
+To clarify, ***currently only supporting SBT 0.10.1***
+
+Enjoy!
