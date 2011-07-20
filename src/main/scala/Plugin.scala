@@ -63,15 +63,13 @@ object RunCloudPlugin extends Plugin {
   private val beesApiHost = "api.cloudbees.com"
   private val beesApiKey = keyFor("bees.api.key") orElse keyFor("bees.apikey")
   private val beesSecret = keyFor("bees.api.secret") orElse keyFor("bees.secret")
+  val beesApplicationId = keyFor("bees.application.id")
+  val beesUsername = keyFor("bees-username")
   
-  val beesApplicationId = SettingKey[String]("bees-application-id", 
-    "The CloudBees identifier for the application you wish to deploy")
-  val beesUsername = SettingKey[String]("bees-username", "Your CloudBees username")
   val beesShouldDeltaWar = SettingKey[Boolean]("bees-should-delta-war", "Deploy only a delta-WAR to CloudBees (default: true)")
   
   // tasks
   val beesAppList = TaskKey[Unit]("bees-app-list", "List the applications in your Run@Cloud account")
-  val beesDeploy  = TaskKey[Unit]("bees-deploy", "Deploy the project WAR to Run@Cloud")
   
   private def beesApplistTask {
     log.info("Applications")
@@ -82,29 +80,31 @@ object RunCloudPlugin extends Plugin {
     }
   }
   
+  // deploy task
+  val beesDeploy: Command = Command.command("bees-deploy")(beesDeployAction)
+  
+  private def beesDeployAction(state: State): State = {
+    val warPath: File = Project.extract(state).evalTask(packageWar: ScopedTask[File], state)
+    val deltaWar: Boolean = Project.extract(state).get(beesShouldDeltaWar: SettingKey[Boolean])
+    app.map(info => client.foreach { c =>
+      if (warPath.exists) {
+        log.info("Deploying application '%s' to Run@Cloud".format(info))
+        c.applicationDeployWar(info, null, null, warPath.asFile.getAbsolutePath, null, deltaWar, new HashWriteProgress)
+      } else log.error("No WAR file exists to deploy to Run@Cloud")
+    })
+    state
+  }
+  
   // set defaults into the users build.sbt
   val deploymentSettings: Seq[Project.Setting[_]] = webSettings ++ Seq(
-    beesShouldDeltaWar := true,
-    beesAppList := beesApplistTask,
-    beesDeploy := beesDeployTask
-  )
+      beesShouldDeltaWar := true,
+      beesAppList := beesApplistTask,
+      Keys.commands ++= Seq(beesDeploy))
   
-  private def beesDeployTask = (packageWar) map { (war) => println(war) } 
-    // val warPath = WebPlugin.tempoaryWarPath
-    // if(!app.isEmpty){
-    //   client.foreach { c => 
-    //     if(warPath.exists){
-    //       log.info("Deploying application '%s' to Run@Cloud".format(app))
-    //       c.applicationDeployWar(
-    //         app, null, null, warPath.asFile.getAbsolutePath,
-    //         null, beesShouldDeltaWar, new HashWriteProgress)
-    //     } else log.error("No WAR file exists to deploy to Run@Cloud")
-    // }}
-  
-  // private def app = (for{
-  //   uid <- beesUsername orPromtFor("CloudBees Username")
-  //   aid <- beesApplicationId orPromtFor("CloudBees Application ID")
-  // } yield targetAppId(uid,aid)).getOrElse("<unknown>")
+  private def app: Option[String] = for {
+    uid <- beesUsername orPromtFor("CloudBees Username")
+    aid <- beesApplicationId orPromtFor("CloudBees Application ID")
+  } yield targetAppId(uid, aid)  
   
   private def client: Option[BeesClient] = machineSettings.map(s => 
     new BeesClient("http://%s/api".format(beesApiHost), s.key, s.secret, "xml", "1.0"))
@@ -114,19 +114,3 @@ object RunCloudPlugin extends Plugin {
     secret <- beesSecret orPromtFor("CloudBees Secret")
   } yield UserSettings(key,secret)
 }
-
-
-// trait RunCloudPlugin extends Plugin {
-  // import RunCloudPlugin._
-  
-  
-  // val BeesDeployDescription = "Deploy your WAR to stax.net with bees-deploy"
-  //   lazy val beesDeploy = beesDeployAction
-  //   protected def beesDeployAction = 
-  //     task(beesDeployTask) dependsOn(`package`) describedAs(BeesDeployDescription)
-  //   
-
-  //   
-// }
-
-

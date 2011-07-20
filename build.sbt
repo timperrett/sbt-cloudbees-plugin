@@ -18,9 +18,10 @@ scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
   "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.0.0-SNAPSHOT" % "compile",
-  "com.github.siasia" %% "xsbt-web-plugin" % "0.1-SNAPSHOT" % "compile",
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
+
+libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin" % ("0.1.0-"+v))
 
 // publishing
 publishTo := Some("scalatools.releases" at "http://nexus.scala-tools.org/content/repositories/releases/")
