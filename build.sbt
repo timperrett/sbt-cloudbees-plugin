@@ -5,7 +5,7 @@ organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version := "0.3.1"
+version in Posterous := "0.3.1"
 
 version <<= (version, sbtVersion) { (v, sbtv) => v + "_" + sbtv }
 

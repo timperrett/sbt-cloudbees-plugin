@@ -21,7 +21,7 @@ Specifically, in project/plugins/build.sbt define the following:
 
 <pre><code>resolvers += "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
 
-libraryDependencies += "eu.getintheloop" %% "sbt-cloudbees-plugin" % "0.3.0"
+libraryDependencies += "eu.getintheloop" %% "sbt-cloudbees-plugin" % "0.3.1"
 </code></pre>
  
 Add the plugin to your built.sbt project file like so:
