@@ -5,7 +5,9 @@ organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version := "0.3.0"
+version := "0.3.1"
+
+version <<= (version, sbtVersion) { (v, sbtv) => v + "_" + sbtv }
 
 // maven repositories
 resolvers ++= Seq(
@@ -24,6 +26,17 @@ libraryDependencies ++= Seq(
 libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin" % ("0.1.0-"+v))
 
 // publishing
-publishTo := Some("scalatools.releases" at "http://nexus.scala-tools.org/content/repositories/releases/")
+publishTo <<= version { (v: String) =>
+  if(v endsWith "-SNAPSHOT") Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/snapshots/")
+  else Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/")
+}
 
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+
+publishArtifact in (Compile, packageBin) := true
+
+publishArtifact in (Test, packageBin) := false
+
+publishArtifact in (Compile, packageDoc) := false
+
+publishArtifact in (Compile, packageSrc) := false

@@ -1,0 +1,4 @@
+Changes to the build so that you can use the plugin with various different versions of SBT (0.10.0, 0.10.1).
+
+All features remain the same.
+
