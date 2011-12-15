@@ -5,15 +5,15 @@ organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version in Posterous := "0.3.1"
+version in Posterous := "0.3.3"
 
-version <<= (version, sbtVersion) { (v, sbtv) => v + "_" + sbtv }
+version <<= sbtVersion("0.3.3-"+_)
 
 // maven repositories
 resolvers ++= Seq(
   "specs.repo" at "http://specs.googlecode.com/svn/maven2/",
   "sonatype.repo" at "https://oss.sonatype.org/content/groups/public",
-  "Web plugin repo" at "http://siasia.github.com/maven2"
+  "web-plugin.repo" at "http://siasia.github.com/maven2"
 )
 
 scalacOptions += "-deprecation"
@@ -23,7 +23,9 @@ libraryDependencies ++= Seq(
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
 
-libraryDependencies <+= sbtVersion(v => "com.github.siasia" %% "xsbt-web-plugin" % ("0.1.0-"+v))
+libraryDependencies <+= (sbtVersion) { sv =>
+  "com.github.siasia" %% "xsbt-web-plugin" % (sv + "-0.2.10")
+}
 
 // publishing
 publishTo <<= version { (v: String) =>
