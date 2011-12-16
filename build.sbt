@@ -17,7 +17,7 @@ resolvers ++= Seq(
 scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
-  "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.0.0-SNAPSHOT" % "compile",
+  "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.1.2" % "compile",
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
 
