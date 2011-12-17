@@ -30,6 +30,13 @@ CloudBees.apiKey := Some("FXXXXXXXXXXX")
 CloudBees.apiSecret := Some("AAAAAAAAAAAAAAAAAAAA=")
 </code></pre>
 
+These of course are global settings per-machine, so the only application specific settings you need to define are the application and user in your project file. Alternativly, you could also define the username globally too:
+
+<pre><code>CloudBees.username := Some("youruser")
+
+CloudBees.applicationId := Some("yourapp")
+</code></pre>
+
 Now your all configured and good to go, there are two commands you can run with this plugin:
 
 * Get a list of your configured applications: <code>cloudbees-applications</code>
