@@ -1,0 +1,10 @@
+Version 4.0 has been a major rewrite to make use of the more idiomatic task functionaltiy within SBT 0.10+
+
+Major changes:
+
+* Plugin now works with SBT 0.11.2 **only**
+* Use of the $HOME/.bees directory for configuration is now gone. In order to become more inline with SBT conventions configuration now takes place in the ~/.sbt/user.sbt 
+* The deployment task name has changed from bees-deploy to cloudbees-deploy
+* The remote application list task has changed from bees-app-list to cloudbees-applications
+* All settings and tasks are prefixed cloudbees, so they should be easy to find in the console
+* Prompting for settings that are undefined is gone. All settings are checked before use and will deliver an error in the console if the appropriate setting is empty. 
