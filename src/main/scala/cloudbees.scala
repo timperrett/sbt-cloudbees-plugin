@@ -2,6 +2,9 @@ package cloudbees
 
 import sbt._, Keys._, Project.Initialize
 import com.cloudbees.api.{BeesClient,HashWriteProgress}
+import edu.stanford.ejalbert.{BrowserLauncher => BL}
+
+object BrowserLauncher extends BL()
 
 object Plugin extends Plugin {
   import CloudBees._
@@ -62,7 +65,7 @@ object Plugin extends Plugin {
         val result = client().applicationDeployWar(to, null, null, war.asFile.getAbsolutePath, null, true, new HashWriteProgress)
         s.log.info("Application avalible at %s".format(result.getUrl))
         if (open) {
-          openApp(result.getUrl)
+          BrowserLauncher.openURLinBrowser(result.getUrl)
         }
       } else sys.error("There was a problem locating the WAR file for this project")
   }
@@ -70,7 +73,7 @@ object Plugin extends Plugin {
   def openTask = (username, applicationId) map { (user, app) => for {
       u <- user
       a <- app
-    } openApp("http://" + a + "." + u + ".cloudbees.net")
+    } BrowserLauncher.openURLinBrowser("http://" + a + "." + u + ".cloudbees.net")
   }
 
   /***** internal *****/
@@ -82,16 +85,4 @@ object Plugin extends Plugin {
     value.getOrElse {
       sys.error("%s setting is required".format(setting.key.label))
     }
-  private def openApp(url: String) {
-    // VERY roughly taken from the Ruby Launchy library
-    val command = System.getProperty("os.name") match {
-      case os if os.toLowerCase contains "os x"    => "open"
-      case os if os.toLowerCase contains "windows" => "start /b"
-      case os if os.toLowerCase contains "cygwin"  => "cmd /C start /b"
-      case _                                       => "xdg-open"
-    }
-    val str = command + " " + url + ""
-    Process.stringToProcess(str).run
-    // don't destroy the Process after running since that seems to prevent it from running at all
-  }
 }

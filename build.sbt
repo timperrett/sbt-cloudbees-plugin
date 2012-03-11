@@ -18,6 +18,7 @@ scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
   "com.cloudbees" % "cloudbees-api-client-nodeps" % "1.1.2" % "compile",
+  "edu.stanford.ejalbert" % "BrowserLauncher2" % "1.3" % "compile",
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
 
