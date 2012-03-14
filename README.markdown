@@ -10,7 +10,7 @@ Firstly you need to add the plugin to your ~/.sbt/user.sbt or to your regular pr
 
 <pre><code>resolvers += "sonatype.repo" at "https://oss.sonatype.org/content/groups/public"
 
-addSbtPlugin("eu.getintheloop" %% "sbt-cloudbees-plugin" % "0.4.0-SNAPSHOT")
+addSbtPlugin("eu.getintheloop" %% "sbt-cloudbees-plugin" % "0.4.0")
 </code></pre>
 
 Don't forget to export the settings so they are included by SBT:
