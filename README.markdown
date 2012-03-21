@@ -41,3 +41,4 @@ Now your all configured and good to go, there are two commands you can run with 
 
 * Get a list of your configured applications: <code>cloudbees-applications</code>
 * Deploy your application <code>cloudbees-deploy</code>
+* Open the application in your default web browser: <code>cloudbees-open</code>
