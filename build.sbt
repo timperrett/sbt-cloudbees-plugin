@@ -5,7 +5,7 @@ organization := "eu.getintheloop"
 
 name := "sbt-cloudbees-plugin"
 
-version := "0.4.1-SNAPSHOT"
+version := "0.4.1"
 
 // maven repositories
 resolvers ++= Seq(
@@ -22,9 +22,13 @@ libraryDependencies ++= Seq(
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
 
-libraryDependencies <+= (sbtVersion) { sv =>
-  "com.github.siasia" %% "xsbt-web-plugin" % (sv + "-0.2.10")
-}
+libraryDependencies <+= sbtVersion(v => v match {
+  case "0.11.0" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.0-0.2.8"
+  case "0.11.1" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.1-0.2.10"
+  case "0.11.2" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.2-0.2.11"
+  case "0.11.3" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.3-0.2.11.1"
+  case x if (x.startsWith("0.12")) => "com.github.siasia" %% "xsbt-web-plugin" % "0.12.0-0.2.11.1"
+})
 
 // publishing
 publishTo <<= version { (v: String) =>
@@ -32,12 +36,37 @@ publishTo <<= version { (v: String) =>
   else Some("Scala Tools Nexus" at "http://nexus.scala-tools.org/content/repositories/releases/")
 }
 
-credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
+credentials += Credentials(Path.userHome / ".ivy2" / ".credentials.sonatype")
 
-publishArtifact in (Compile, packageBin) := true
+publishTo <<= version { (v: String) => 
+  val nexus = "https://oss.sonatype.org/" 
+  if (v.trim.endsWith("SNAPSHOT")) Some("snapshots" at nexus + "content/repositories/snapshots") 
+  else Some("releases" at nexus + "service/local/staging/deploy/maven2") 
+}
 
-publishArtifact in (Test, packageBin) := false
+publishMavenStyle := true
 
-publishArtifact in (Compile, packageDoc) := false
+publishArtifact in Test := false
 
-publishArtifact in (Compile, packageSrc) := false
+pomIncludeRepository := { repo => false }
+
+pomExtra := (
+  <url>https://github.com/timperrett/sbt-cloudbees-plugin</url>
+  <licenses>
+    <license>
+      <name>Apache 2.0 License</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <scm>
+    <url>git@github.com:timperrett/sbt-cloudbees-plugin.git</url>
+    <connection>scm:git:git@github.com:timperrett/sbt-cloudbees-plugin.git</connection>
+  </scm>
+  <developers>
+    <developer>
+      <id>timperrett</id>
+      <name>Timothy Perrett</name>
+      <url>http://timperrett.com</url>
+    </developer>
+  </developers>)
