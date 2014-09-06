@@ -48,7 +48,7 @@ object Plugin extends Plugin {
     applications <<= applicationsTask,
     deploy <<= deployTask,
     open <<= openTask
-  ) ++ warSettings
+  ) ++ globalWarSettings
   
   import scala.collection.JavaConverters._
   
