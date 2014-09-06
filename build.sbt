@@ -14,6 +14,17 @@ resolvers ++= Seq(
   "web-plugin.repo" at "http://siasia.github.com/maven2"
 )
 
+sbtVersion in Global <<= scalaBinaryVersion { scala =>
+  scala match {
+    case "2.10" => "0.13.5"
+    case "2.9.2" => "0.12.4"
+  }
+}
+
+scalaVersion in Global := "2.10.4"
+
+crossScalaVersions := Seq("2.9.2", "2.10.4")
+
 scalacOptions += "-deprecation"
 
 libraryDependencies ++= Seq(
@@ -22,13 +33,7 @@ libraryDependencies ++= Seq(
   "org.scala-tools.testing" % "specs" % "1.6.1" % "test"
 )
 
-libraryDependencies <+= sbtVersion(v => v match {
-  case "0.11.0" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.0-0.2.8"
-  case "0.11.1" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.1-0.2.10"
-  case "0.11.2" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.2-0.2.11"
-  case "0.11.3" => "com.github.siasia" %% "xsbt-web-plugin" % "0.11.3-0.2.11.1"
-  case x if (x.startsWith("0.12")) => "com.github.siasia" %% "xsbt-web-plugin" % "0.12.0-0.2.11.1"
-})
+addSbtPlugin("com.earldouglas" % "xsbt-web-plugin" % "0.5.0")
 
 // publishing
 publishTo <<= version { (v: String) =>
