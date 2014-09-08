@@ -33,8 +33,8 @@ object Plugin extends Plugin {
     val open          = TaskKey[Unit]("cloudbees-open", "Open the application in your default web browser")
   }
 
-  import com.github.siasia.WarPlugin._
-  import com.github.siasia.PluginKeys.packageWar
+  import com.earldouglas.xsbtwebplugin.WarPlugin._
+  import com.earldouglas.xsbtwebplugin.PluginKeys.packageWar
 
   val cloudBeesSettings: Seq[Setting[_]] = Seq(
     host := "api.cloudbees.com",
@@ -48,7 +48,7 @@ object Plugin extends Plugin {
     applications <<= applicationsTask,
     deploy <<= deployTask,
     open <<= openTask
-  ) ++ warSettings
+  ) ++ globalWarSettings
   
   import scala.collection.JavaConverters._
   
